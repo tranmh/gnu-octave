@@ -37,7 +37,7 @@ function [grid, success] = load_pattern(filename, target_rows, target_cols)
   endif
   
   % Ensure filename has .txt extension
-  if ~endswith(filename, '.txt')
+  if length(filename) < 4 || ~strcmp(filename(end-3:end), '.txt')
     filename = [filename, '.txt'];
   endif
   

@@ -10,9 +10,9 @@ clc;
 fprintf('=== Testing Phase 3: Interactive Controls ===\n\n');
 
 % Add necessary directories to path
-addpath('../core');
-addpath('../display');
-addpath('../interaction');
+addpath('core');
+addpath('display');
+addpath('interaction');
 
 % Test 1: Mouse Click Handler - Valid clicks
 fprintf('Test 1: Testing mouse click handler with valid coordinates...\n');

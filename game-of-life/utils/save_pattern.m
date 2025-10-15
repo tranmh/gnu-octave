@@ -34,7 +34,7 @@ function success = save_pattern(grid, filename)
   endif
   
   % Ensure filename has .txt extension
-  if ~endswith(filename, '.txt')
+  if length(filename) < 4 || ~strcmp(filename(end-3:end), '.txt')
     filename = [filename, '.txt'];
   endif
   

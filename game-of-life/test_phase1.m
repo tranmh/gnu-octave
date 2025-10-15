@@ -152,6 +152,6 @@ fprintf('All Phase 1 Tests PASSED!\n');
 fprintf('====================================\n');
 fprintf('\nCore Game Logic is working correctly:\n');
 fprintf('  ✓ Neighbor counting with toroidal boundaries\n');
-fprintf('  ✓ Conway\'s rules applied correctly\n');
+fprintf('  ✓ Conway''s rules applied correctly\n');
 fprintf('  ✓ Known patterns behave as expected\n');
 fprintf('\nPhase 1 is ready for integration!\n');

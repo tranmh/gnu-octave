@@ -10,8 +10,8 @@ clc;
 fprintf('=== Testing Phase 2: Basic Visualization ===\n\n');
 
 % Add core directory to path
-addpath('../core');
-addpath('../display');
+addpath('core');
+addpath('display');
 
 % Test 1: Initialize display
 fprintf('Test 1: Initializing display window...\n');
