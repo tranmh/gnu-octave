@@ -64,7 +64,7 @@ A simple and elegant implementation of Conway's Game of Life in GNU Octave with 
 
 ---
 
-### Phase 4: Pattern Library & Menu
+### Phase 4: Pattern Library & Menu // DONE
 **Goal**: Provide various starting patterns
 
 **Components**:
