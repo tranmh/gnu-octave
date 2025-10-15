@@ -41,7 +41,7 @@ function game_of_life(grid_size)
   
   % Default grid size
   if nargin < 1
-    grid_size = 50;
+    grid_size = [];  % Will be set by show_menu
   endif
   
   % Print welcome message
@@ -51,11 +51,28 @@ function game_of_life(grid_size)
   fprintf('═══════════════════════════════════════════════════════════════════\n');
   fprintf('\nInitializing...\n');
   
-  % Show pattern selection menu
-  [grid, pattern_name] = show_menu(grid_size);
+  % Show pattern selection menu (gets pattern choice and grid size from user)
+  [pattern_name, user_grid_size] = show_menu();
   
-  if isempty(grid)
-    fprintf('Initialization cancelled.\n');
+  % Use user-specified grid size, or the function parameter if provided
+  if isempty(grid_size)
+    grid_size = user_grid_size;
+  endif
+  
+  % Create the grid with the selected pattern
+  grid = zeros(grid_size, grid_size);
+  
+  % Get the pattern from the library
+  pattern = pattern_library(pattern_name);
+  
+  % Handle random pattern specially
+  if strcmp(pattern_name, 'random')
+    grid = rand(grid_size, grid_size) > 0.5;  % Random binary grid
+  elseif ~isempty(pattern)
+    % Place the pattern in the center of the grid
+    grid = place_pattern(grid, pattern);
+  else
+    fprintf('Unknown pattern: %s\n', pattern_name);
     return;
   endif
   
@@ -194,7 +211,8 @@ function game_of_life(grid_size)
             [rows, cols] = size(grid);
             [l_rows, l_cols] = size(loaded_grid);
             if l_rows <= rows && l_cols <= cols
-              grid = place_pattern(loaded_grid, [rows, cols]);
+              grid = zeros(rows, cols);  % Clear the grid
+              grid = place_pattern(grid, loaded_grid);
               initial_grid = grid;
               generation = 0;
               prev_grid = [];
@@ -226,7 +244,11 @@ function game_of_life(grid_size)
           grid = gameoflife_rules(grid);
           generation = generation + 1;
           stats = calculate_stats(grid, prev_grid, generation);
-          status_str = stats.is_static ? 'Static' : 'Paused';
+          if stats.is_static
+            status_str = 'Static';
+          else
+            status_str = 'Paused';
+          endif
           update_display(fig_handle, grid, stats, status_str);
         endif
         
