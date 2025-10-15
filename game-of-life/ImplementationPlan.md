@@ -99,7 +99,7 @@ A simple and elegant implementation of Conway's Game of Life in GNU Octave with 
 
 ---
 
-### Phase 6: Statistics & Polish
+### Phase 6: Statistics & Polish // DONE
 **Goal**: Add final features and refinements
 
 **Components**:
