@@ -13,7 +13,7 @@
 % Output:
 %   action - Structure containing:
 %     .type  - Action type: 'pause', 'resume', 'step', 'reset', 
-%              'clear', 'quit', 'speed', 'none'
+%              'clear', 'save', 'load', 'quit', 'speed', 'none'
 %     .speed - New speed value (only for 'speed' action)
 %
 % Keyboard Controls:
@@ -21,6 +21,8 @@
 %   S     - Single step forward (when paused)
 %   R     - Reset to initial state
 %   C     - Clear grid (kill all cells)
+%   V     - Save current pattern to file
+%   L     - Load pattern from file
 %   +/=   - Increase speed (decrease delay)
 %   -/_   - Decrease speed (increase delay)
 %   Q     - Quit simulation
@@ -64,6 +66,14 @@ function action = handle_keyboard(key, current_speed)
     case 'h'
       % H - Show help
       action.type = 'help';
+      
+    case 'v'
+      % V - Save pattern
+      action.type = 'save';
+      
+    case 'l'
+      % L - Load pattern
+      action.type = 'load';
       
     case {'+', '='}
       % +/= - Increase speed (decrease delay)
