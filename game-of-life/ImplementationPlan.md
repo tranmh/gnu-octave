@@ -46,7 +46,7 @@ A simple and elegant implementation of Conway's Game of Life in GNU Octave with 
 
 ---
 
-### Phase 3: Interactive Controls
+### Phase 3: Interactive Controls // DONE
 **Goal**: Enable user interaction with the simulation
 
 **Components**:
