@@ -32,7 +32,7 @@ A simple and elegant implementation of Conway's Game of Life in GNU Octave with 
 
 ---
 
-### Phase 2: Basic Visualization
+### Phase 2: Basic Visualization // DONE
 **Goal**: Create simple graphical display of the grid
 
 **Components**:
