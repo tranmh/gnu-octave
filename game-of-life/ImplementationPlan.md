@@ -17,7 +17,7 @@ A simple and elegant implementation of Conway's Game of Life in GNU Octave with 
 
 ## Implementation Phases
 
-### Phase 1: Core Game Logic
+### Phase 1: Core Game Logic // DONE
 **Goal**: Implement the fundamental Game of Life algorithm
 
 **Components**:
