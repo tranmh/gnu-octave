@@ -107,7 +107,7 @@ where:
 - Three core solver files
 - Test suite with analytical solutions (e.g., simple exponential decay)
 - Performance benchmarks
-- DONE: [ ]
+- DONE: [X] // DONE
 
 ---
 
@@ -148,7 +148,7 @@ where:
 - Four visualization functions
 - Example outputs for documentation
 - Frame rate testing (smooth animation at ~30 fps)
-- DONE: [ ]
+- DONE: [X] // DONE
 
 ---
 
