@@ -117,7 +117,8 @@ try
         u0 = get_pattern_1d('nonexistent', 100);
         error('Should have thrown an error');
     catch e
-        assert(contains(e.message, 'Unknown pattern'), 'Should give clear error message');
+        % Use strfind instead of contains for Octave compatibility
+        assert(~isempty(strfind(e.message, 'Unknown pattern')), 'Should give clear error message');
     end
     fprintf('PASSED\n');
     tests_passed = tests_passed + 1;
@@ -271,7 +272,8 @@ try
         u0 = get_pattern_2d('nonexistent', 50, 50);
         error('Should have thrown an error');
     catch e
-        assert(contains(e.message, 'Unknown pattern'), 'Should give clear error message');
+        % Use strfind instead of contains for Octave compatibility
+        assert(~isempty(strfind(e.message, 'Unknown pattern')), 'Should give clear error message');
     end
     fprintf('PASSED\n');
     tests_passed = tests_passed + 1;

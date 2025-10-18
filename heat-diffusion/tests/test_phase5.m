@@ -151,11 +151,13 @@ function test_phase5()
                              'dt', 0.001, 't_final', 0.1, 'T_boundary', 0.0);
         
         % Create initial Gaussian
-        u0 = get_pattern_1d('gaussian', params_test.nx, params_test.L);
+        u0 = get_pattern_1d('gaussian', params_test.nx);
         initial_energy = sum(u0);
         
         % Solve
-        [u_hist, x, t] = heat_solver_1d(u0, params_test);
+        [u_hist, x, t] = heat_solver_1d(u0, params_test.alpha, params_test.L, ...
+                                        params_test.T_boundary, params_test.nx, ...
+                                        params_test.dt, params_test.t_final);
         final_energy = sum(u_hist(:, end));
         
         % Energy should decrease (heat flows out through boundaries)
@@ -174,11 +176,14 @@ function test_phase5()
                                 'nx', 30, 'ny', 30, 'dt', 0.001, ...
                                 't_final', 0.05, 'T_boundary', 0.0);
         
-        u0 = get_pattern_2d('center_hot', params_test_2d.nx, params_test_2d.ny, ...
-                            params_test_2d.Lx, params_test_2d.Ly);
+        u0 = get_pattern_2d('center_hot', params_test_2d.nx, params_test_2d.ny);
         initial_energy = sum(u0(:));
         
-        [u_hist, x, y, t] = heat_solver_2d(u0, params_test_2d);
+        [u_hist, x, y, t] = heat_solver_2d(u0, params_test_2d.alpha, ...
+                                           params_test_2d.Lx, params_test_2d.Ly, ...
+                                           params_test_2d.T_boundary, ...
+                                           params_test_2d.nx, params_test_2d.ny, ...
+                                           params_test_2d.dt, params_test_2d.t_final);
         final_energy = sum(u_hist(:, :, end), 'all');
         
         assert(final_energy < initial_energy, '2D heat not dissipating');
@@ -205,10 +210,12 @@ function test_phase5()
         params_test = struct('alpha', 0.01, 'L', 1.0, 'nx', 50, ...
                              'dt', 0.001, 't_final', 0.1, 'T_boundary', 0.0);
         
-        u0 = get_pattern_1d('gaussian', params_test.nx, params_test.L);
+        u0 = get_pattern_1d('gaussian', params_test.nx);
         max_initial = max(u0);
         
-        [u_hist, x, t] = heat_solver_1d(u0, params_test);
+        [u_hist, x, t] = heat_solver_1d(u0, params_test.alpha, params_test.L, ...
+                                        params_test.T_boundary, params_test.nx, ...
+                                        params_test.dt, params_test.t_final);
         max_final = max(u_hist(:));
         
         assert(max_final <= max_initial * 1.001, 'Maximum principle violated');
@@ -236,11 +243,17 @@ function test_phase5()
         params_fine = params_coarse;
         params_fine.nx = 40;
         
-        u0_coarse = get_pattern_1d('gaussian', params_coarse.nx, params_coarse.L);
-        u0_fine = get_pattern_1d('gaussian', params_fine.nx, params_fine.L);
+        u0_coarse = get_pattern_1d('gaussian', params_coarse.nx);
+        u0_fine = get_pattern_1d('gaussian', params_fine.nx);
         
-        [u_coarse, ~, ~] = heat_solver_1d(u0_coarse, params_coarse);
-        [u_fine, ~, ~] = heat_solver_1d(u0_fine, params_fine);
+        [u_coarse, ~, ~] = heat_solver_1d(u0_coarse, params_coarse.alpha, ...
+                                          params_coarse.L, params_coarse.T_boundary, ...
+                                          params_coarse.nx, params_coarse.dt, ...
+                                          params_coarse.t_final);
+        [u_fine, ~, ~] = heat_solver_1d(u0_fine, params_fine.alpha, ...
+                                        params_fine.L, params_fine.T_boundary, ...
+                                        params_fine.nx, params_fine.dt, ...
+                                        params_fine.t_final);
         
         % Compare center values at final time
         center_coarse = u_coarse(round(end/2), end);
@@ -268,10 +281,12 @@ function test_phase5()
         % Test 6a: 1D performance
         params_perf = struct('alpha', 0.01, 'L', 1.0, 'nx', 100, ...
                              'dt', 0.001, 't_final', 0.1, 'T_boundary', 0.0);
-        u0 = get_pattern_1d('gaussian', params_perf.nx, params_perf.L);
+        u0 = get_pattern_1d('gaussian', params_perf.nx);
         
         tic;
-        [u_hist, x, t] = heat_solver_1d(u0, params_perf);
+        [u_hist, x, t] = heat_solver_1d(u0, params_perf.alpha, params_perf.L, ...
+                                        params_perf.T_boundary, params_perf.nx, ...
+                                        params_perf.dt, params_perf.t_final);
         time_1d = toc;
         
         fprintf('  ✓ 1D solver (nx=%d, %d steps): %.3f seconds\n', ...
@@ -287,11 +302,14 @@ function test_phase5()
         params_perf_2d = struct('alpha', 0.01, 'Lx', 1.0, 'Ly', 1.0, ...
                                 'nx', 40, 'ny', 40, 'dt', 0.001, ...
                                 't_final', 0.05, 'T_boundary', 0.0);
-        u0 = get_pattern_2d('center_hot', params_perf_2d.nx, params_perf_2d.ny, ...
-                            params_perf_2d.Lx, params_perf_2d.Ly);
+        u0 = get_pattern_2d('center_hot', params_perf_2d.nx, params_perf_2d.ny);
         
         tic;
-        [u_hist, x, y, t] = heat_solver_2d(u0, params_perf_2d);
+        [u_hist, x, y, t] = heat_solver_2d(u0, params_perf_2d.alpha, ...
+                                           params_perf_2d.Lx, params_perf_2d.Ly, ...
+                                           params_perf_2d.T_boundary, ...
+                                           params_perf_2d.nx, params_perf_2d.ny, ...
+                                           params_perf_2d.dt, params_perf_2d.t_final);
         time_2d = toc;
         
         fprintf('  ✓ 2D solver (%dx%d, %d steps): %.3f seconds\n', ...
@@ -315,7 +333,7 @@ function test_phase5()
         % Test all 1D patterns
         patterns_1d = {'gaussian', 'step', 'double_peak', 'sine', 'random'};
         for i = 1:length(patterns_1d)
-            u0 = get_pattern_1d(patterns_1d{i}, 50, 1.0);
+            u0 = get_pattern_1d(patterns_1d{i}, 50);
             assert(length(u0) == 50, sprintf('Wrong size for pattern %s', patterns_1d{i}));
         end
         fprintf('  ✓ All 1D patterns generate correctly\n');
@@ -330,7 +348,7 @@ function test_phase5()
         patterns_2d = {'center_hot', 'corner_hot', 'gaussian', 'ring', ...
                        'checkerboard', 'radial', 'random'};
         for i = 1:length(patterns_2d)
-            u0 = get_pattern_2d(patterns_2d{i}, 30, 30, 1.0, 1.0);
+            u0 = get_pattern_2d(patterns_2d{i}, 30, 30);
             assert(all(size(u0) == [30, 30]), ...
                    sprintf('Wrong size for pattern %s', patterns_2d{i}));
         end

@@ -288,7 +288,8 @@ try
   [u_history2, x2, t2] = heat_solver_1d(u0, alpha, L, T_boundary, nx2, dt, t_final);
   
   % Interpolate coarse solution to fine grid for comparison
-  u1_interp = interp1(x1, u_history1(:, end), x2, 'linear');
+  % Use 'extrap' to handle boundary points properly
+  u1_interp = interp1(x1, u_history1(:, end), x2, 'linear', 'extrap');
   
   % Error should decrease with refinement
   convergence_ratio = norm(u1_interp - u_history2(:, end)) / norm(u_history2(:, end));

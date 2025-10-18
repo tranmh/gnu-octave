@@ -68,11 +68,12 @@ function L = build_laplacian_1d(nx)
   % Main diagonal: -2
   main_diag = -2 * ones(nx, 1);
   
-  % Off-diagonals: 1
-  off_diag = ones(nx - 1, 1);
+  % Off-diagonals: 1 (padded to length nx for spdiags)
+  off_diag_lower = [ones(nx - 1, 1); 0];
+  off_diag_upper = [0; ones(nx - 1, 1)];
   
   % Construct sparse tridiagonal matrix
-  L = spdiags([off_diag, main_diag, off_diag], [-1, 0, 1], nx, nx);
+  L = spdiags([off_diag_lower, main_diag, off_diag_upper], [-1, 0, 1], nx, nx);
 end
 
 
