@@ -182,7 +182,7 @@ where:
 - Two control system files
 - User interaction testing
 - Documentation of all controls
-- DONE: [ ]
+- DONE: [X] // DONE
 
 ---
 
