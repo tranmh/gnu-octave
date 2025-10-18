@@ -126,7 +126,7 @@ function main_2d()
             error('Invalid pattern choice');
         end
         pattern_name = patterns_2d{choice};
-        u0 = get_pattern_2d(pattern_name, params.nx, params.ny, params.Lx, params.Ly);
+        u0 = get_pattern_2d(pattern_name, params.nx, params.ny);
     end
     
     fprintf('Selected pattern: %s\n\n', pattern_name);
@@ -141,7 +141,9 @@ function main_2d()
     
     % Solve the heat equation
     tic;
-    [u_history, x, y, t] = heat_solver_2d(u0, params);
+    [u_history, x, y, t] = heat_solver_2d(u0, params.alpha, params.Lx, params.Ly, ...
+                                           params.T_boundary, params.nx, params.ny, ...
+                                           params.dt, params.t_final);
     elapsed = toc;
     
     fprintf('Simulation complete!\n');

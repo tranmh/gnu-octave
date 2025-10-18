@@ -43,7 +43,7 @@ function u0 = get_pattern_1d(pattern_name, nx, varargin)
     %   u0 = get_pattern_1d('double_peak', 100, 'center1', 0.25, 'center2', 0.75);
     
     % Parse optional parameters
-    p = inputParser;
+    p = inputParser();
     addParameter(p, 'amplitude', 100);
     addParameter(p, 'width', 0.1);
     addParameter(p, 'center', 0.5);

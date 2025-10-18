@@ -46,7 +46,7 @@ function u0 = get_pattern_2d(pattern_name, nx, ny, varargin)
     %   u0 = get_pattern_2d('checkerboard', 50, 50, 'num_checks', 8);
     
     % Parse optional parameters
-    p = inputParser;
+    p = inputParser();
     addParameter(p, 'amplitude', 100);
     addParameter(p, 'width', 0.1);
     addParameter(p, 'center_x', 0.5);

@@ -121,7 +121,7 @@ function main_1d()
             error('Invalid pattern choice');
         end
         pattern_name = patterns_1d{choice};
-        u0 = get_pattern_1d(pattern_name, params.nx, params.L);
+        u0 = get_pattern_1d(pattern_name, params.nx);
     end
     
     fprintf('Selected pattern: %s\n\n', pattern_name);
