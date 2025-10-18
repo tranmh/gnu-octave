@@ -223,7 +223,7 @@ where:
 - Pattern library files
 - Gallery of initial conditions
 - Custom pattern creation guide
-- DONE: [ ]
+- DONE: [X] // DONE
 
 ---
 
