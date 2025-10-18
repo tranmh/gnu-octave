@@ -199,7 +199,8 @@ function [pattern_name, params] = pattern_menu(dimension)
                            'noise_level', params.noise_level);
         
         figure('Name', 'Pattern Preview', 'NumberTitle', 'off');
-        x = linspace(0, 1, nx_preview+2)(2:end-1);
+        x_full = linspace(0, 1, nx_preview+2);
+        x = x_full(2:end-1);
         plot(x, u0, 'b-', 'LineWidth', 2);
         grid on;
         xlabel('Position x');

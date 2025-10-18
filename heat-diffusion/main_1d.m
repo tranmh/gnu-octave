@@ -114,7 +114,17 @@ function main_1d()
     
     if isempty(choice)
         % Use interactive pattern menu
-        [pattern_name, u0] = pattern_menu('1d', params);
+        [pattern_name, pattern_params] = pattern_menu(1);
+        
+        % Generate pattern using returned parameters
+        u0 = get_pattern_1d(pattern_name, params.nx, ...
+                           'amplitude', pattern_params.amplitude, ...
+                           'width', pattern_params.width, ...
+                           'center', pattern_params.center, ...
+                           'center1', pattern_params.center1, ...
+                           'center2', pattern_params.center2, ...
+                           'frequency', pattern_params.frequency, ...
+                           'noise_level', pattern_params.noise_level);
     else
         % Direct pattern selection
         if choice < 1 || choice > length(patterns_1d)
@@ -134,7 +144,9 @@ function main_1d()
     fprintf('Press H during simulation to see controls\n\n');
     
     % Solve the heat equation
-    [u_history, x, t] = heat_solver_1d(u0, params);
+    [u_history, x, t] = heat_solver_1d(u0, params.alpha, params.L, ...
+                                        params.T_boundary, params.nx, ...
+                                        params.dt, params.t_final);
     
     fprintf('Simulation complete!\n');
     fprintf('  Total time steps: %d\n', length(t));
@@ -148,12 +160,9 @@ function main_1d()
     fprintf('Starting animation...\n');
     fprintf('Use controls to interact with the simulation\n\n');
     
-    % Set up interactive controls and run animation
-    fig = figure('Name', '1D Heat Diffusion', 'NumberTitle', 'off', ...
-                 'Position', [100, 100, 900, 600]);
-    
     % Animate with interactive controls
-    animate_1d(u_history, x, t, params, fig);
+    % Note: animate_1d creates its own figure
+    animate_1d(x, u_history, t, params);
     
     fprintf('\n=================================================\n');
     fprintf('Simulation complete. Thank you for using the\n');

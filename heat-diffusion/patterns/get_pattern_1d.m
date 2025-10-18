@@ -62,7 +62,8 @@ function u0 = get_pattern_1d(pattern_name, nx, varargin)
     noise_amp = p.Results.noise_level;
     
     % Create spatial grid (0 to 1, excluding boundaries)
-    x = linspace(0, 1, nx+2)(2:end-1)';  % Interior points only
+    x_full = linspace(0, 1, nx+2);
+    x = x_full(2:end-1)';  % Interior points only
     
     % Initialize output
     u0 = zeros(nx, 1);

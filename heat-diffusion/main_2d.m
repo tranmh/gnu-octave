@@ -119,7 +119,17 @@ function main_2d()
     
     if isempty(choice)
         % Use interactive pattern menu
-        [pattern_name, u0] = pattern_menu('2d', params);
+        [pattern_name, pattern_params] = pattern_menu(2);
+        
+        % Generate pattern using returned parameters
+        u0 = get_pattern_2d(pattern_name, params.nx, params.ny, ...
+                           'amplitude', pattern_params.amplitude, ...
+                           'width', pattern_params.width, ...
+                           'center_x', pattern_params.center_x, ...
+                           'center_y', pattern_params.center_y, ...
+                           'ring_radius', pattern_params.ring_radius, ...
+                           'num_checks', pattern_params.num_checks, ...
+                           'noise_level', pattern_params.noise_level);
     else
         % Direct pattern selection
         if choice < 1 || choice > length(patterns_2d)
@@ -160,12 +170,9 @@ function main_2d()
     fprintf('Use controls to interact with the simulation\n');
     fprintf('Press V to cycle through different view modes\n\n');
     
-    % Set up figure
-    fig = figure('Name', '2D Heat Diffusion', 'NumberTitle', 'off', ...
-                 'Position', [100, 100, 1000, 700]);
-    
     % Animate with interactive controls
-    animate_2d(u_history, x, y, t, params, fig);
+    % Note: animate_2d creates its own figure
+    animate_2d(x, y, u_history, t, params);
     
     fprintf('\n=================================================\n');
     fprintf('Simulation complete. Thank you for using the\n');
