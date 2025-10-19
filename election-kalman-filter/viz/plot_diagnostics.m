@@ -48,7 +48,7 @@ plot(weeks, win_prob_std, 'b-', 'LineWidth', 2);
 hold on;
 
 % Mark transition period
-xline(38, 'r--', 'LineWidth', 1.5, 'Label', 'Transition');
+plot([38, 38], ylim, 'r--', 'LineWidth', 1.5); text(38, max(ylim)*0.95, 'Transition', 'Rotation', 90, 'VerticalAlignment', 'bottom');
 
 ylabel('Uncertainty (σ)', 'FontSize', 10, 'FontWeight', 'bold');
 title('Prediction Uncertainty Evolution', 'FontSize', 11, 'FontWeight', 'bold');
@@ -62,10 +62,10 @@ if has_innovation
     innovation = pred.innovation;
     plot(weeks, innovation, 'g-', 'LineWidth', 1.5);
     hold on;
-    yline(0, 'k--', 'LineWidth', 1);
+    plot(xlim, [0, 0], 'k--', 'LineWidth', 1);
     
     % Mark transition
-    xline(38, 'r--', 'LineWidth', 1.5);
+    plot([38, 38], ylim, 'r--', 'LineWidth', 1.5);
     
     ylabel('Innovation', 'FontSize', 10, 'FontWeight', 'bold');
     title('Filter Innovation (Measurement Residuals)', ...
@@ -88,7 +88,7 @@ if has_gain
     hold on;
     
     % Mark transition
-    xline(38, 'r--', 'LineWidth', 1.5);
+    plot([38, 38], ylim, 'r--', 'LineWidth', 1.5);
     
     xlabel('Week Number', 'FontSize', 10, 'FontWeight', 'bold');
     ylabel('Kalman Gain', 'FontSize', 10, 'FontWeight', 'bold');
@@ -105,13 +105,8 @@ else
     axis off;
 end
 
-% Overall title
-if isempty(opts.title_text)
-    sgtitle('Kalman Filter Diagnostic Plots', ...
-            'FontSize', 14, 'FontWeight', 'bold');
-else
-    sgtitle(opts.title_text, 'FontSize', 14, 'FontWeight', 'bold');
-end
+% Overall title (sgtitle not supported in Octave)
+% Would display: Kalman Filter Diagnostic Plots
 
 % Save if requested
 if opts.save_fig

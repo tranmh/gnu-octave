@@ -85,8 +85,7 @@ for i = 1:length(ci_levels_sorted)
 end
 
 % Add 50% reference line
-yline(0.5, 'k--', 'LineWidth', 1.5, 'Alpha', 0.5, ...
-      'Label', '50% Threshold');
+plot(xlim, [0.5, 0.5], 'k--', 'LineWidth', 1.5);
 
 % Formatting
 xlabel('Week Number', 'FontSize', 12, 'FontWeight', 'bold');

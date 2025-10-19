@@ -61,7 +61,7 @@ scatter(weekly_polls.weeks, poll_win_prob, 50, 'r', 'filled', ...
         'MarkerFaceAlpha', 0.6);
 
 % Add 50% reference line
-yline(0.5, 'k--', 'LineWidth', 1.5, 'Alpha', 0.5);
+plot(xlim, [0.5, 0.5], 'k--', 'LineWidth', 1.5);
 
 % Formatting
 xlabel('Week Number', 'FontSize', 12, 'FontWeight', 'bold');

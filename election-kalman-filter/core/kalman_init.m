@@ -59,6 +59,10 @@ function params = kalman_init(varargin)
     params.Q = p.Results.Q;       % Process noise covariance
     params.R = p.Results.R;       % Measurement noise covariance
     params.k_scale = p.Results.k_scale;  % Polling margin scaling
+
+    % Add aliases for compatibility with weekly_processor
+    params.x0 = params.x_est;
+    params.P0 = params.P_est;
     
     %% Initialize history tracking
     params.history.x_est = [];        % State estimates over time

@@ -94,8 +94,12 @@ function backtest_results = run_backtest(varargin)
         fprintf('Kalman Filter Parameters:\n');
         fprintf('  Q (process noise): %.6f\n', params.Q);
         fprintf('  R (measurement noise): %.6f\n', params.R);
-        fprintf('  Initial state: %.4f\n', params.x0);
-        fprintf('  Initial uncertainty: %.4f\n\n', params.P0);
+        if isfield(params, 'x0')
+            fprintf('  Initial state: %.4f\n', params.x0);
+        end
+        if isfield(params, 'P0')
+            fprintf('  Initial uncertainty: %.4f\n\n', params.P0);
+        end
     end
     
     % ===== RUN WEEKLY PROCESSOR =====

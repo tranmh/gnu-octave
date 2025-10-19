@@ -58,21 +58,24 @@ fill([weeks; flipud(weeks)], ...
      'b', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 
 % Add 50% reference line
-yline(0.5, 'k--', 'LineWidth', 1.5, 'Alpha', 0.5);
+plot(xlim, [0.5, 0.5], 'k--', 'LineWidth', 1.5);
 
 % Add actual result line if requested
 if opts.show_result
     % Actual outcome: Trump won (Dem probability should be < 0.5)
     actual_prob = 0;  % Trump won decisively
-    yline(actual_prob, 'r-', 'LineWidth', 2, ...
-          'Label', sprintf('Actual: %s Wins', actual.winner));
+    plot(xlim, [actual_prob, actual_prob], 'r-', 'LineWidth', 2);
+    text(max(weeks)*0.95, actual_prob+0.05, sprintf('Actual: %s Wins', actual.winner), ...
+         'Color', 'r', 'FontSize', 10, 'HorizontalAlignment', 'right');
 end
 
 % Mark candidate transition (Biden -> Harris, Week ~38)
 transition_week = 38;
 if max(weeks) >= transition_week
-    xline(transition_week, 'g--', 'LineWidth', 1.5, ...
-          'Label', 'Biden→Harris', 'LabelOrientation', 'horizontal');
+    yl = ylim;
+    plot([transition_week, transition_week], yl, 'g--', 'LineWidth', 1.5);
+    text(transition_week, yl(2)*0.95, 'Biden→Harris', ...
+         'Rotation', 90, 'VerticalAlignment', 'bottom', 'FontSize', 9);
 end
 
 % Formatting

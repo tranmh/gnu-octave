@@ -56,17 +56,14 @@ rep_values = [(1 - final_pred) * 100, 100];
 x = 1:2;
 bar_width = 0.35;
 
-b1 = bar(x - bar_width/2, dem_values, bar_width);
+% Plot bars with explicit colors (Octave compatible)
+b1 = bar(x - bar_width/2, dem_values, bar_width, 'FaceColor', [0.2, 0.4, 0.8]);  % Blue for Democrat
 hold on;
-b2 = bar(x + bar_width/2, rep_values, bar_width);
+b2 = bar(x + bar_width/2, rep_values, bar_width, 'FaceColor', [0.8, 0.2, 0.2]);  % Red for Republican
 
-% Color bars
-b1.FaceColor = [0.2, 0.4, 0.8];  % Blue for Democrat
-b2.FaceColor = [0.8, 0.2, 0.2];  % Red for Republican
-
-% Add error bar for prediction uncertainty
-errorbar(x(1) - bar_width/2, dem_values(1), final_std * 100, ...
-         'k', 'LineWidth', 2);
+% Add error bar for prediction uncertainty (Octave compatible)
+he = errorbar(x(1) - bar_width/2, dem_values(1), final_std * 100);
+set(he, 'Color', 'k', 'LineWidth', 2);
 
 % Formatting
 ylabel('Win Probability (%)', 'FontSize', 11, 'FontWeight', 'bold');
@@ -109,15 +106,13 @@ grid on;
 % Overall title with metrics
 if isempty(opts.title_text)
     title_str = sprintf(['Final Prediction vs Actual Outcome\n', ...
-                        'Final Prediction: %.1f%% Dem | Brier Score: %.3f | ', ...
-                        'Grade: %s'], ...
+                        'Final Prediction: %.1f%% Dem | Brier Score: %.3f'], ...
                         final_pred * 100, ...
-                        metrics.brier_score, ...
-                        metrics.performance_grade);
+                        metrics.brier_score);
 else
     title_str = opts.title_text;
 end
-sgtitle(title_str, 'FontSize', 14, 'FontWeight', 'bold');
+% Note: sgtitle not supported in Octave
 
 % Save if requested
 if opts.save_fig

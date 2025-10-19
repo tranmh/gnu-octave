@@ -66,12 +66,13 @@ fill([weeks_zoom; flipud(weeks_zoom)], ...
      'b', 'FaceAlpha', 0.2, 'EdgeColor', 'none');
 
 % Mark transition week
-xline(trans_week, 'r-', 'LineWidth', 2.5, ...
-      'Label', 'Biden→Harris Transition', ...
-      'LabelOrientation', 'horizontal');
+yl = ylim;
+plot([trans_week, trans_week], yl, 'r-', 'LineWidth', 2.5);
+text(trans_week, yl(2)*0.95, 'Biden→Harris Transition', ...
+     'Rotation', 90, 'VerticalAlignment', 'bottom', 'FontSize', 9);
 
 % Add 50% reference
-yline(0.5, 'k--', 'LineWidth', 1.5, 'Alpha', 0.5);
+plot(xlim, [0.5, 0.5], 'k--', 'LineWidth', 1.5);
 
 % Formatting
 ylabel('Win Probability', 'FontSize', 11, 'FontWeight', 'bold');
@@ -92,7 +93,8 @@ plot(weeks_zoom, win_prob_std_zoom, 'r-', 'LineWidth', 2.5);
 hold on;
 
 % Mark transition week
-xline(trans_week, 'r-', 'LineWidth', 2.5);
+yl2 = ylim;
+plot([trans_week, trans_week], yl2, 'r-', 'LineWidth', 2.5);
 
 % Formatting
 xlabel('Week Number', 'FontSize', 11, 'FontWeight', 'bold');
@@ -103,15 +105,9 @@ grid on;
 ylim([0, max(win_prob_std_zoom) * 1.2]);
 hold off;
 
-% Overall title
-if isempty(opts.title_text)
-    sgtitle(sprintf(['Candidate Transition Analysis (Week %d ± %d)\n', ...
-                     'Biden → Harris: July 21, 2024'], ...
-                    trans_week, window), ...
-            'FontSize', 14, 'FontWeight', 'bold');
-else
-    sgtitle(opts.title_text, 'FontSize', 14, 'FontWeight', 'bold');
-end
+% Overall title (sgtitle not supported in Octave)
+% Would display: Candidate Transition Analysis
+% Biden → Harris: July 21, 2024
 
 % Save if requested
 if opts.save_fig

@@ -1,0 +1,10 @@
+Metric,Value
+Final_Prediction,0.385074
+Final_Error,0.385074
+Brier_Score,0.179759
+Log_Score,0.549291
+RMSE,0.423980
+MAE,0.418577
+Correct_Winner,1.000000
+Prediction_Confidence,0.114926
+Grade,Fair
