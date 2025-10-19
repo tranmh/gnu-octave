@@ -189,7 +189,12 @@ function params = final_params(varargin)
             alt.params = candidates(i, :);
             alt.score = scores(i);
             alt.composite = composite_scores(i);
-            params.alternatives{i > best_idx ? i-1 : i} = alt;
+            if i > best_idx
+                alt_idx = i - 1;
+            else
+                alt_idx = i;
+            end
+            params.alternatives{alt_idx} = alt;
         end
     end
     

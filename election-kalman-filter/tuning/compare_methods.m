@@ -183,8 +183,14 @@ function result = run_kalman_method(params, verbose)
     if verbose
         fprintf('  Parameters: Q=%.5f, R=%.4f, P0=%.4f\n', params(1), params(2), params(3));
     end
-    backtest_results = run_backtest('Q', params(1), 'R', params(2), ...
-                                   'P0', params(3), 'verbose', false);
+    
+    % Create params struct for run_backtest
+    kf_params = struct();
+    kf_params.Q = params(1);
+    kf_params.R = params(2);
+    kf_params.P0 = params(3);
+    
+    backtest_results = run_backtest('params', kf_params, 'verbose', false, 'save_results', false);
     result = extract_metrics(backtest_results);
 end
 

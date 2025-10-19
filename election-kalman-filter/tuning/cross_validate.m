@@ -113,8 +113,12 @@ function results = cross_validate(varargin)
             if verbose
                 fprintf('  Brier score: %.6f\n', validation_result.brier_score);
                 fprintf('  Final error: %.6f\n', validation_result.final_error);
-                fprintf('  Direction correct: %s\n\n', ...
-                       validation_result.direction_correct ? 'Yes' : 'No');
+                if validation_result.direction_correct
+                    direction_str = 'Yes';
+                else
+                    direction_str = 'No';
+                end
+                fprintf('  Direction correct: %s\n\n', direction_str);
             end
             
         catch ME

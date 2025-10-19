@@ -187,8 +187,14 @@ function backtest_results = run_backtest_with_params(Q, R, P0)
     
     polls = load(polls_file);
     
+    % Create params struct for run_backtest
+    params = struct();
+    params.Q = Q;
+    params.R = R;
+    params.P0 = P0;
+    
     % Run backtest with custom parameters
-    backtest_results = run_backtest('Q', Q, 'R', R, 'P0', P0, 'verbose', false);
+    backtest_results = run_backtest('params', params, 'verbose', false, 'save_results', false);
 end
 
 function rmse = calculate_rmse(backtest_results)

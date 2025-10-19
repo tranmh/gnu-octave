@@ -170,7 +170,13 @@ function score = evaluate_params(Q, R, P0, metric)
     % Evaluate Kalman filter performance with given parameters
     
     try
-        backtest_results = run_backtest('Q', Q, 'R', R, 'P0', P0, 'verbose', false);
+        % Create params struct for run_backtest
+        params = struct();
+        params.Q = Q;
+        params.R = R;
+        params.P0 = P0;
+        
+        backtest_results = run_backtest('params', params, 'verbose', false, 'save_results', false);
         
         switch metric
             case 'brier'
