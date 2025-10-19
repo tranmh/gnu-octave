@@ -183,13 +183,14 @@ function result = run_kalman_method(params, verbose)
     if verbose
         fprintf('  Parameters: Q=%.5f, R=%.4f, P0=%.4f\n', params(1), params(2), params(3));
     end
-    
+
     % Create params struct for run_backtest
     kf_params = struct();
     kf_params.Q = params(1);
     kf_params.R = params(2);
     kf_params.P0 = params(3);
-    
+    kf_params.x0 = 0.5;  % Default initial state
+
     backtest_results = run_backtest('params', kf_params, 'verbose', false, 'save_results', false);
     result = extract_metrics(backtest_results);
 end
@@ -254,10 +255,15 @@ function result = run_naive_baseline(polls, verbose)
     if verbose
         fprintf('  Constant 50%% probability\n');
     end
-    
-    n_weeks = length(polls.dem_avg);
+
+    % Determine number of weeks from polls data
+    if isstruct(polls) && isfield(polls, 'dem_avg')
+        n_weeks = length(polls.dem_avg);
+    else
+        n_weeks = 52;  % Default to 52 weeks
+    end
     win_probs = 0.5 * ones(n_weeks, 1);
-    
+
     result = calculate_baseline_metrics(win_probs);
 end
 

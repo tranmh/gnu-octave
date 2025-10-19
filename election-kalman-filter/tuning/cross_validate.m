@@ -87,13 +87,14 @@ function results = cross_validate(varargin)
         end
         
         try
-            % Check if historical data exists            historical_file = sprintf('historical_polls_%d.mat', year);
+            % Check if historical data exists
+            hist_filename = sprintf('historical_polls_%d.mat', year);
             historical_path = fullfile(fileparts(mfilename('fullpath')), '..', ...
-                                      'data', 'processed', historical_file);
+                                      'data', 'processed', hist_filename);
             
             if exist(historical_path, 'file')
                 if verbose
-                    fprintf('  Loading historical data: %s\n', historical_file);
+                    fprintf('  Loading historical data: %s\n', hist_filename);
                 end
                 election_data = load(historical_path);
             elseif use_synthetic

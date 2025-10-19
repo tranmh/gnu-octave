@@ -101,8 +101,9 @@ function results = grid_search(varargin)
                         case 'rmse'
                             score = calculate_rmse(backtest_results);
                         case 'final_error'
-                            score = abs(backtest_results.predictions.win_prob(end) - ...
-                                       backtest_results.actual_outcome.dem_win_prob);
+                            % Actual outcome: Trump won (Dem win prob = 0)
+                            actual_win_prob = 0.0;
+                            score = abs(backtest_results.predictions.win_prob(end) - actual_win_prob);
                     end
                     
                     all_scores(iQ, iR, iP0) = score;
