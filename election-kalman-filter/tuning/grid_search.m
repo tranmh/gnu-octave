@@ -192,6 +192,7 @@ function backtest_results = run_backtest_with_params(Q, R, P0)
     params.Q = Q;
     params.R = R;
     params.P0 = P0;
+    params.x0 = 0.5;  % Default initial state
     
     % Run backtest with custom parameters
     backtest_results = run_backtest('params', params, 'verbose', false, 'save_results', false);

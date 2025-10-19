@@ -175,6 +175,7 @@ function score = evaluate_params(Q, R, P0, metric)
         params.Q = Q;
         params.R = R;
         params.P0 = P0;
+        params.x0 = 0.5;  % Default initial state
         
         backtest_results = run_backtest('params', params, 'verbose', false, 'save_results', false);
         

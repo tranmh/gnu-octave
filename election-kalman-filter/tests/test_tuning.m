@@ -13,6 +13,14 @@ function test_tuning()
     %
     % NOTE: Tests use small parameter ranges for speed
     
+    % Add paths to required directories
+    script_dir = fileparts(mfilename('fullpath'));
+    project_root = fileparts(script_dir);
+    addpath(fullfile(project_root, 'tuning'));
+    addpath(fullfile(project_root, 'core'));
+    addpath(fullfile(project_root, 'backtest'));
+    addpath(fullfile(project_root, 'data', 'processed'));
+    
     fprintf('\n========================================\n');
     fprintf('Phase 6: Parameter Tuning Tests\n');
     fprintf('========================================\n\n');

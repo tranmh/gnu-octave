@@ -41,6 +41,7 @@ function [results] = weekly_processor(varargin)
     % Parse optional parameters
     p = inputParser;
     addParameter(p, 'data_file', '', @ischar);
+    addParameter(p, 'params', [], @(x) isempty(x) || isstruct(x));  % NEW: Accept params struct
     addParameter(p, 'Q', 0.001, @isnumeric);
     addParameter(p, 'R_base', 0.05, @isnumeric);
     addParameter(p, 'x0', 0.5, @isnumeric);
@@ -49,11 +50,22 @@ function [results] = weekly_processor(varargin)
     addParameter(p, 'verbose', true, @islogical);
     parse(p, varargin{:});
     
-    % Extract parameters
-    Q = p.Results.Q;
-    R_base = p.Results.R_base;
-    x0 = p.Results.x0;
-    P0 = p.Results.P0;
+    % Extract params from struct if provided, otherwise use individual parameters
+    if ~isempty(p.Results.params)
+        params = p.Results.params;
+        Q = params.Q;
+        R_base = params.R;
+        x0 = params.x0;
+        P0 = params.P0;
+    else
+        Q = p.Results.Q;
+        R_base = p.Results.R_base;
+        x0 = p.Results.x0;
+        P0 = p.Results.P0;
+    end
+    
+    % Extract other parameters
+    data_file = p.Results.data_file;
     save_results_flag = p.Results.save_results;
     verbose = p.Results.verbose;
     
@@ -121,7 +133,7 @@ function [results] = weekly_processor(varargin)
     P_est = P0;
     
     % Initialize results storage
-    results = struct('week_number', {}, 'date', {}, 'dem_candidate', {}, ...
+    details = struct('week_number', {}, 'date', {}, 'dem_candidate', {}, ...
                      'poll_obs', {}, 'x_pred', {}, 'P_pred', {}, ...
                      'x_est', {}, 'P_est', {}, 'K', {}, 'innovation', {}, ...
                      'Q_used', {}, 'R_used', {});
@@ -193,7 +205,7 @@ function [results] = weekly_processor(varargin)
         res.Q_used = Q_adj;
         res.R_used = R_meas;
         
-        results = [results; res];
+        details = [details; res];
         
         % Print progress
         if verbose
@@ -234,8 +246,8 @@ function [results] = weekly_processor(varargin)
         fid = fopen(output_file, 'w');
         fprintf(fid, 'week_number,date,dem_candidate,poll_obs,x_pred,P_pred,x_est,P_est,K,innovation,Q_used,R_used\n');
         
-        for i = 1:length(results)
-            r = results(i);
+        for i = 1:length(details)
+            r = details(i);
             fprintf(fid, '%d,%s,%s,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.8f,%.6f\n', ...
                     r.week_number, r.date, r.dem_candidate, ...
                     r.poll_obs, r.x_pred, r.P_pred, r.x_est, r.P_est, ...
@@ -248,16 +260,16 @@ function [results] = weekly_processor(varargin)
     % Display summary statistics
     if verbose
         fprintf('\n=== Weekly Processing Summary ===\n');
-        fprintf('Total weeks processed: %d\n', length(results));
+        fprintf('Total weeks processed: %d\n', length(details));
         
         % Count measurements
-        valid_obs = sum(~isnan([results.poll_obs]));
+        valid_obs = sum(~isnan([details.poll_obs]));
         fprintf('Weeks with polling observations: %d\n', valid_obs);
         fprintf('Weeks without observations: %d\n', 52 - valid_obs);
         
         % Final estimate
-        final_est = results(end).x_est;
-        final_std = sqrt(results(end).P_est);
+        final_est = details(end).x_est;
+        final_std = sqrt(details(end).P_est);
         fprintf('\n--- Final Prediction (Week 52) ---\n');
         fprintf('Democratic win probability: %.2f%% ± %.2f%%\n', ...
                 final_est * 100, final_std * 100 * 1.96);
@@ -282,13 +294,13 @@ function [results] = weekly_processor(varargin)
         fprintf('\nPrediction error: %.2f%% (probability scale)\n', prediction_error * 100);
         
         % Kalman gain statistics
-        valid_gains = [results.K](~isnan([results.poll_obs]));
+        valid_gains = [details.K](~isnan([details.poll_obs]));
         fprintf('\n--- Filter Statistics ---\n');
         fprintf('Average Kalman gain: %.3f\n', mean(valid_gains));
         fprintf('Kalman gain range: %.3f - %.3f\n', min(valid_gains), max(valid_gains));
         
         % Innovation statistics
-        valid_innov = [results.innovation](~isnan([results.poll_obs]));
+        valid_innov = [details.innovation](~isnan([details.poll_obs]));
         fprintf('Mean innovation: %.4f\n', mean(valid_innov));
         fprintf('Innovation std: %.4f\n', std(valid_innov));
         
@@ -297,5 +309,13 @@ function [results] = weekly_processor(varargin)
         fprintf('  - Phase 4: Run backtesting (backtest/run_backtest.m)\n');
         fprintf('  - Phase 5: Generate visualizations (viz/plot_prediction_timeline.m)\n\n');
     end
+    
+    % Create output structure with both detailed results and convenience fields
+    results = struct();
+    results.details = details;  % Original struct array with all weekly details
+    results.win_prob_history = [details.x_est]';
+    results.uncertainty_history = sqrt([details.P_est]');
+    results.week_numbers = [details.week_number]';
+    results.dates = {details.date}';
     
 end

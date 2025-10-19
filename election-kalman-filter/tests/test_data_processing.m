@@ -192,14 +192,14 @@ function test_data_processing()
         end
         
         % Check if dates match expected range
-        if ~isempty(first_line) && contains(first_date, '2023-11')
+        if ~isempty(first_line) && ~isempty(strfind(first_date, '2023-11'))
             fprintf('  ✓ Start date matches expected (Nov 2023)\n');
         else
             fprintf('  ✗ Start date mismatch\n');
             all_passed = false;
         end
         
-        if ~isempty(last_line) && contains(last_date, '2024-11')
+        if ~isempty(last_line) && ~isempty(strfind(last_date, '2024-11'))
             fprintf('  ✓ End date matches expected (Nov 2024)\n');
         else
             fprintf('  ✗ End date mismatch\n');
