@@ -459,7 +459,7 @@ Each phase is marked as **// DONE** in this file when:
 ## Phase Status
 
 - [x] **Phase 1**: Data Acquisition & Preprocessing // DONE
-- [ ] **Phase 2**: Kalman Filter Core Implementation
+- [x] **Phase 2**: Kalman Filter Core Implementation // DONE
 - [ ] **Phase 3**: Weekly Update System
 - [ ] **Phase 4**: Backtesting Framework
 - [ ] **Phase 5**: Visualization
