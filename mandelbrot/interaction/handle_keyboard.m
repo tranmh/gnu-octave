@@ -148,6 +148,47 @@ function state = handle_keyboard(state, key)
       state.running = false;
       fprintf('Quitting...\n');
 
+    % Save bookmark
+    case {'s', 'S'}
+      bookmark_name = input('Bookmark name: ', 's');
+      if ~isempty(bookmark_name)
+        bookmark_manager('save', state, bookmark_name);
+      end
+
+    % Load bookmark
+    case {'l', 'L'}
+      bookmarks = bookmark_manager('list');
+      if ~isempty(bookmarks)
+        bookmark_num = input('Enter bookmark number to load: ');
+        if bookmark_num >= 1 && bookmark_num <= length(bookmarks)
+          loaded_state = bookmark_manager('load', bookmarks{bookmark_num}.filename);
+          % Update current state with loaded values
+          fields = fieldnames(loaded_state);
+          for i = 1:length(fields)
+            state.(fields{i}) = loaded_state.(fields{i});
+          end
+          state.needs_render = true;
+          fprintf('Bookmark loaded!\n');
+        end
+      end
+
+    % Export image
+    case {'e', 'E'}
+      filename = input('Export filename (PNG): ', 's');
+      if ~isempty(filename)
+        res_choice = input('Resolution: (1) HD, (2) 4K [2]: ', 's');
+        if isempty(res_choice) || strcmp(res_choice, '2')
+          resolution = [3840, 2160];
+        else
+          resolution = [1920, 1080];
+        end
+        export_image(state, filename, resolution);
+      end
+
+    % Pattern gallery
+    case {'g', 'G'}
+      show_pattern_gallery(state);
+
     otherwise
       % Unknown key - ignore
   end
@@ -204,8 +245,53 @@ function show_help()
   fprintf('  + - Increase iterations\n');
   fprintf('  - - Decrease iterations\n');
   fprintf('  R - Reset to default view\n\n');
+  fprintf('Advanced Features:\n');
+  fprintf('  G - Pattern gallery (famous locations)\n');
+  fprintf('  S - Save bookmark\n');
+  fprintf('  L - Load bookmark\n');
+  fprintf('  E - Export image (HD/4K)\n\n');
   fprintf('Other:\n');
   fprintf('  H - Show this help\n');
   fprintf('  Q - Quit\n');
   fprintf('========================================\n\n');
+end
+
+
+function show_pattern_gallery(state)
+  % Display pattern gallery and select location
+
+  patterns = pattern_library();
+
+  fprintf('\n========================================\n');
+  fprintf('  PATTERN GALLERY - FAMOUS LOCATIONS\n');
+  fprintf('========================================\n\n');
+
+  % Group by fractal type
+  fractal_types = unique(cellfun(@(x) x.fractal_type, patterns, 'UniformOutput', false));
+
+  pattern_num = 1;
+  for ft = 1:length(fractal_types)
+    ftype = fractal_types{ft};
+    type_patterns = pattern_library(ftype);
+
+    fprintf('%s:\n', upper(ftype));
+    fprintf('-------------------\n');
+
+    for i = 1:length(type_patterns)
+      p = type_patterns{i};
+      fprintf('  %d. %s\n', pattern_num, p.name);
+      fprintf('     %s\n', p.description);
+      pattern_num = pattern_num + 1;
+    end
+    fprintf('\n');
+  end
+
+  fprintf('Enter pattern number to load (0 to cancel): ');
+  choice = input('');
+
+  if choice > 0 && choice <= length(patterns)
+    fprintf('\nLoading pattern: %s\n', patterns{choice}.name);
+    fprintf('Press any key when ready to continue with explorer...\n');
+  end
+
 end
