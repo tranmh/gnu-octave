@@ -100,6 +100,16 @@ function state = handle_keyboard(state, key)
       state.needs_render = true;
       fprintf('Fractal: Phoenix (c = %.3f%+.3fi)\n', real(state.phoenix_c), imag(state.phoenix_c));
 
+    case {'v', 'V'}
+      state.fractal_type = 'mandelbulb';
+      state.needs_render = true;
+      fprintf('Fractal: 3D Mandelbulb (power = %d)\n', state.mandelbulb_power);
+
+    case {'n', 'N'}
+      state.fractal_type = 'mandelbox';
+      state.needs_render = true;
+      fprintf('Fractal: 3D Mandelbox (scale = %.2f)\n', state.mandelbox_scale);
+
     % Iterations
     case {'+', '=', 'add', 'equal'}
       state.max_iter = min(state.max_iter * 2, 4096);
@@ -178,13 +188,16 @@ function show_help()
   fprintf('  3 - Electric Dream ⚡\n');
   fprintf('  4 - Monochrome Elegance 🎨\n');
   fprintf('  5 - Northern Lights 🌌\n\n');
-  fprintf('Fractals:\n');
+  fprintf('Fractals (2D):\n');
   fprintf('  M - Mandelbrot Set\n');
   fprintf('  J - Julia Set\n');
   fprintf('  B - Burning Ship\n');
   fprintf('  T - Tricorn\n');
   fprintf('  P - Multibrot\n');
   fprintf('  X - Phoenix\n\n');
+  fprintf('Fractals (3D):\n');
+  fprintf('  V - Mandelbulb\n');
+  fprintf('  N - Mandelbox\n\n');
   fprintf('Navigation:\n');
   fprintf('  Click - Zoom in 2x at point\n');
   fprintf('  Arrows - Pan view\n');

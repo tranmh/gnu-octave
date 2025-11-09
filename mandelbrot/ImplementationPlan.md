@@ -363,7 +363,7 @@ mandelbrot/
 
 ---
 
-### Phase 5: 3D Fractals
+### Phase 5: 3D Fractals // DONE
 **Goal**: Mandelbulb and Mandelbox 3D visualization
 
 **Components**:

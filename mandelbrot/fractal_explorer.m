@@ -44,6 +44,8 @@ function fractal_explorer(resolution)
   state.multibrot_power = 3;      % Power for Multibrot
   state.phoenix_c = 0.5 - 0.1i;   % Phoenix parameter c
   state.phoenix_p = -0.5 + 0i;    % Phoenix parameter p
+  state.mandelbulb_power = 8;     % Mandelbulb power
+  state.mandelbox_scale = 2.5;    % Mandelbox scale
   state.zoom_level = 1.0;
   state.running = true;
   state.needs_render = true;
@@ -203,42 +205,64 @@ function render_fractal(fig)
   tic;
 
   % Compute fractal
-  switch state.fractal_type
-    case 'mandelbrot'
-      [iter, final_z] = mandelbrot_2d(state.center, state.width, state.height, ...
-                                      state.resolution(1), state.resolution(2), ...
-                                      state.max_iter, state.escape_radius);
-    case 'julia'
-      [iter, final_z] = julia_2d(state.julia_c, state.center, state.width, state.height, ...
-                                 state.resolution(1), state.resolution(2), ...
-                                 state.max_iter, state.escape_radius);
-    case 'burning_ship'
-      [iter, final_z] = burning_ship(state.center, state.width, state.height, ...
-                                     state.resolution(1), state.resolution(2), ...
-                                     state.max_iter, state.escape_radius);
-    case 'tricorn'
-      [iter, final_z] = tricorn(state.center, state.width, state.height, ...
-                                state.resolution(1), state.resolution(2), ...
-                                state.max_iter, state.escape_radius);
-    case 'multibrot'
-      [iter, final_z] = multibrot(state.multibrot_power, state.center, state.width, state.height, ...
+  is_3d = strcmp(state.fractal_type, 'mandelbulb') || strcmp(state.fractal_type, 'mandelbox');
+
+  if is_3d
+    % 3D fractal rendering
+    params.power = state.mandelbulb_power;
+    params.scale = state.mandelbox_scale;
+    params.max_iter = 16;  % 3D uses fewer iterations
+    params.max_steps = 100;
+    params.camera_pos = [0, 0, -3];
+    params.camera_target = [0, 0, 0];
+
+    [gray_image, hit_map] = render_3d(state.fractal_type, params, ...
+                                      state.resolution(1), state.resolution(2));
+
+    time_compute = toc;
+    time_color = 0;
+
+    % Convert grayscale to RGB
+    rgb_image = repmat(gray_image, [1, 1, 3]);
+  else
+    % 2D fractal rendering
+    switch state.fractal_type
+      case 'mandelbrot'
+        [iter, final_z] = mandelbrot_2d(state.center, state.width, state.height, ...
+                                        state.resolution(1), state.resolution(2), ...
+                                        state.max_iter, state.escape_radius);
+      case 'julia'
+        [iter, final_z] = julia_2d(state.julia_c, state.center, state.width, state.height, ...
+                                   state.resolution(1), state.resolution(2), ...
+                                   state.max_iter, state.escape_radius);
+      case 'burning_ship'
+        [iter, final_z] = burning_ship(state.center, state.width, state.height, ...
+                                       state.resolution(1), state.resolution(2), ...
+                                       state.max_iter, state.escape_radius);
+      case 'tricorn'
+        [iter, final_z] = tricorn(state.center, state.width, state.height, ...
                                   state.resolution(1), state.resolution(2), ...
                                   state.max_iter, state.escape_radius);
-    case 'phoenix'
-      [iter, final_z] = phoenix(state.phoenix_c, state.phoenix_p, state.center, state.width, state.height, ...
-                                state.resolution(1), state.resolution(2), ...
-                                state.max_iter, state.escape_radius);
-    otherwise
-      error('Unknown fractal type: %s', state.fractal_type);
+      case 'multibrot'
+        [iter, final_z] = multibrot(state.multibrot_power, state.center, state.width, state.height, ...
+                                    state.resolution(1), state.resolution(2), ...
+                                    state.max_iter, state.escape_radius);
+      case 'phoenix'
+        [iter, final_z] = phoenix(state.phoenix_c, state.phoenix_p, state.center, state.width, state.height, ...
+                                  state.resolution(1), state.resolution(2), ...
+                                  state.max_iter, state.escape_radius);
+      otherwise
+        error('Unknown fractal type: %s', state.fractal_type);
+    end
+
+    time_compute = toc;
+
+    % Apply smooth coloring
+    tic;
+    smooth = smooth_coloring(iter, final_z, state.escape_radius);
+    rgb_image = apply_colormap(smooth, state.palette);
+    time_color = toc;
   end
-
-  time_compute = toc;
-
-  % Apply smooth coloring
-  tic;
-  smooth = smooth_coloring(iter, final_z, state.escape_radius);
-  rgb_image = apply_colormap(smooth, state.palette);
-  time_color = toc;
 
   % Display
   axes(ax);
