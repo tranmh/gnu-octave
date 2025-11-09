@@ -54,13 +54,51 @@ function state = handle_keyboard(state, key)
     % Fractal type
     case {'m', 'M'}
       state.fractal_type = 'mandelbrot';
+      state.center = -0.5 + 0i;
+      state.width = 3.5;
+      state.height = 2.5;
       state.needs_render = true;
       fprintf('Fractal: Mandelbrot Set\n');
 
     case {'j', 'J'}
       state.fractal_type = 'julia';
+      state.center = 0 + 0i;
+      state.width = 4.0;
+      state.height = 3.0;
       state.needs_render = true;
       fprintf('Fractal: Julia Set (c = %.3f%+.3fi)\n', real(state.julia_c), imag(state.julia_c));
+
+    case {'b', 'B'}
+      state.fractal_type = 'burning_ship';
+      state.center = -0.5 - 0.5i;
+      state.width = 4.0;
+      state.height = 3.0;
+      state.needs_render = true;
+      fprintf('Fractal: Burning Ship\n');
+
+    case {'t', 'T'}
+      state.fractal_type = 'tricorn';
+      state.center = 0 + 0i;
+      state.width = 4.0;
+      state.height = 3.0;
+      state.needs_render = true;
+      fprintf('Fractal: Tricorn (Mandelbar)\n');
+
+    case {'p', 'P'}
+      state.fractal_type = 'multibrot';
+      state.center = 0 + 0i;
+      state.width = 4.0;
+      state.height = 3.0;
+      state.needs_render = true;
+      fprintf('Fractal: Multibrot (power = %d)\n', state.multibrot_power);
+
+    case {'x', 'X'}
+      state.fractal_type = 'phoenix';
+      state.center = 0 + 0i;
+      state.width = 4.0;
+      state.height = 3.0;
+      state.needs_render = true;
+      fprintf('Fractal: Phoenix (c = %.3f%+.3fi)\n', real(state.phoenix_c), imag(state.phoenix_c));
 
     % Iterations
     case {'+', '=', 'add', 'equal'}
@@ -109,14 +147,19 @@ end
 
 function state = reset_view(state)
   % Reset to default view for current fractal type
-  if strcmp(state.fractal_type, 'mandelbrot')
-    state.center = -0.5 + 0i;
-    state.width = 3.5;
-    state.height = 2.5;
-  else
-    state.center = 0 + 0i;
-    state.width = 4.0;
-    state.height = 3.0;
+  switch state.fractal_type
+    case 'mandelbrot'
+      state.center = -0.5 + 0i;
+      state.width = 3.5;
+      state.height = 2.5;
+    case 'burning_ship'
+      state.center = -0.5 - 0.5i;
+      state.width = 4.0;
+      state.height = 3.0;
+    otherwise
+      state.center = 0 + 0i;
+      state.width = 4.0;
+      state.height = 3.0;
   end
   state.zoom_level = 1.0;
   state.max_iter = 256;
@@ -137,7 +180,11 @@ function show_help()
   fprintf('  5 - Northern Lights 🌌\n\n');
   fprintf('Fractals:\n');
   fprintf('  M - Mandelbrot Set\n');
-  fprintf('  J - Julia Set\n\n');
+  fprintf('  J - Julia Set\n');
+  fprintf('  B - Burning Ship\n');
+  fprintf('  T - Tricorn\n');
+  fprintf('  P - Multibrot\n');
+  fprintf('  X - Phoenix\n\n');
   fprintf('Navigation:\n');
   fprintf('  Click - Zoom in 2x at point\n');
   fprintf('  Arrows - Pan view\n');
