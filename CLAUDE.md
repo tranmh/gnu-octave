@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a collection of GNU Octave scientific computing projects demonstrating numerical methods, simulations, and data analysis. The repository contains three main projects:
+This is a collection of GNU Octave scientific computing projects demonstrating numerical methods, simulations, and data analysis. The repository contains four main projects:
 
 1. **game-of-life**: Conway's Game of Life cellular automaton simulator
 2. **heat-diffusion**: Heat equation PDE solver using Crank-Nicolson method
 3. **election-kalman-filter**: Kalman filter for 2024 US election prediction
+4. **mandelbrot**: Mandelbrot & Fractal Explorer with 8 fractal types, 5 color palettes, and advanced export features
 
 **GNU Octave Installation**: C:\Users\tranm\AppData\Local\Programs\GNU Octave\Octave-10.3.0
 
@@ -33,6 +34,13 @@ main_2d                  % 2D heat diffusion simulation
 % Election Kalman Filter
 cd election-kalman-filter/pipeline
 weekly_processor()       % Run full 52-week Kalman filter
+
+% Mandelbrot & Fractal Explorer
+cd mandelbrot
+fractal_explorer()            % Default 800x600 resolution
+fractal_explorer([1920, 1080]) % HD resolution
+fractal_explorer([400, 300])   % Smaller for 3D (faster)
+colormap_gallery()            % Compare all 5 color palettes
 ```
 
 ### Running Tests
@@ -64,6 +72,15 @@ test_kalman_core()       % Phase 2: Kalman filter core
 test_pipeline()          % Phase 3: Weekly processing
 test_backtest()          % Phase 4: Backtesting
 test_tuning()            % Phase 6: Parameter tuning
+
+% Mandelbrot & Fractal Explorer tests
+cd mandelbrot/tests
+test_phase1    % Core fractal algorithms (Mandelbrot, Julia)
+test_phase2    % Visualization and color palettes
+test_phase3    % Interactive controls (zoom, pan, keyboard)
+test_phase4    % Extended 2D fractals (Burning Ship, Tricorn, Multibrot, Phoenix)
+test_phase5    % 3D fractals (Mandelbulb, Mandelbox)
+test_phase6    % Advanced features (pattern library, bookmarks, export)
 
 % CLI test runners (for automated/non-interactive testing)
 test_phase2_cli
@@ -141,6 +158,49 @@ A Kalman filter system for election prediction using polling data:
 - `pipeline/weekly_processor.m`: Main entry point for full analysis
 - `backtest/run_backtest.m`: Validates against actual 2024 results
 
+### Mandelbrot & Fractal Explorer
+
+An interactive fractal visualization system featuring 8 fractal types, 5 color palettes, and professional export capabilities:
+
+- **core/**: Fractal algorithms (8 types: Mandelbrot, Julia, Burning Ship, Tricorn, Multibrot, Phoenix, Mandelbulb, Mandelbox)
+- **display/**: Visualization (smooth coloring, 5 color palettes, 3D ray marching renderer)
+- **interaction/**: User controls (zoom/pan handlers, keyboard shortcuts)
+- **utils/**: Advanced features (pattern library with 24 locations, bookmarks, HD/4K export, animation generation)
+- **tests/**: Comprehensive test suite (50 tests across 6 phases)
+
+**Key Design**: Interactive explorer (`fractal_explorer.m`) integrates all components in an event-driven loop. Smooth coloring eliminates banding using continuous iteration values (mu = n + 1 - log(log(|z|))/log(2)). 3D rendering uses distance estimation with ray marching for performance. Pattern library provides 24 famous fractal locations across all types.
+
+**Mathematical Foundation**:
+```
+Mandelbrot Set: z_{n+1} = z_n^2 + c, z_0 = 0
+Julia Sets: z_{n+1} = z_n^2 + c (fixed c), z_0 = pixel coordinate
+Burning Ship: z_{n+1} = (|Re(z_n)| + i|Im(z_n)|)^2 + c
+Tricorn: z_{n+1} = conj(z_n)^2 + c
+Multibrot: z_{n+1} = z_n^d + c (variable power d)
+Phoenix: z_{n+1} = z_n^2 + Re(c) + Im(c) * z_{n-1}
+
+3D Mandelbulb: Spherical coordinate transformation, power-8 formula
+  DE = 0.5 * r * log(r) / dr (distance estimation)
+3D Mandelbox: Box folding + sphere folding + scale/translate
+
+Smooth coloring: mu = n + 1 - log(log(|z_n|)) / log(2)
+```
+
+**Interactive Controls**:
+- Mouse: Left click = zoom in 2x, Right click = zoom out 2x
+- Keyboard: 1-5 (palettes), M/J/B/T/P/X (2D fractals), V/N (3D fractals)
+- Navigation: +/- (iterations), Arrows (pan), R (reset)
+- Advanced: G (gallery), S (save bookmark), L (load bookmark), E (export HD/4K)
+
+**Critical Files**:
+- `fractal_explorer.m`: Main interactive application and event loop
+- `core/mandelbrot_2d.m`, `core/julia_2d.m`, etc.: Individual fractal algorithms
+- `display/smooth_coloring.m`: Continuous iteration formula (170x speedup via vectorization)
+- `display/render_3d.m`: Ray marching renderer for 3D fractals
+- `utils/pattern_library.m`: Database of 24 famous locations
+- `utils/export_image.m`: HD/4K image export
+- `utils/export_animation.m`: Zoom animation frame generation
+
 ## Development Patterns
 
 ### Phased Development Approach
@@ -152,7 +212,7 @@ All projects follow systematic phased development documented in `ImplementationP
 3. **Phase 3**: Interactive controls
 4. **Phase 4**: Pattern/data libraries
 5. **Phase 5**: Polish, utilities, comprehensive testing
-6. **Phase 6** (election-kalman-filter only): Parameter tuning and validation
+6. **Phase 6**: Advanced features (election-kalman-filter: parameter tuning; mandelbrot: pattern library, bookmarks, export)
 
 Each phase has corresponding test files (`test_phase*.m`) that must pass before proceeding.
 
@@ -260,6 +320,16 @@ end
 - Missing weeks handled by prediction-only updates (no measurement)
 - Probability bounds enforced [0,1]
 
+**Mandelbrot & Fractal Explorer**:
+- Smooth coloring eliminates banding using continuous iteration values
+- 2D fractals: 800×600 renders in <1s, 1920×1080 in ~10s, 4K in <10s
+- 3D fractals: Much slower, use 400×300 for interaction (~5s), 1920×1080 takes 15-40s
+- Pattern library contains 24 famous locations (Seahorse Valley, Elephant Valley, etc.)
+- Bookmarks saved as .mat files in bookmarks/ directory
+- Export supports HD (1920×1080) and 4K (3840×2160)
+- Animation export uses logarithmic interpolation for smooth zoom
+- Distance estimation in 3D (Mandelbulb, Mandelbox) improves ray marching performance
+
 ## Data Files and Formats
 
 ### Game of Life
@@ -293,6 +363,35 @@ week,week_start,week_end,dem_avg,rep_avg,dem_std,rep_std,num_polls,candidate
 39,2024-07-21,2024-07-28,48.1,46.9,2.2,2.1,7,Harris
 ```
 
+### Mandelbrot & Fractal Explorer
+
+**Bookmark files** (`bookmarks/*.mat`):
+- MATLAB .mat format containing state structures
+- Fields: fractal_type, center, width, height, max_iter, palette, zoom_level
+- Fractal-specific: julia_c, multibrot_power, phoenix_c, phoenix_p, mandelbulb_power, mandelbox_scale
+- Metadata: timestamp, description
+
+**Pattern library** (`utils/pattern_library.m`):
+```octave
+% Pattern structure:
+pattern.name = 'Seahorse Valley';
+pattern.fractal_type = 'mandelbrot';
+pattern.center = -0.745 + 0.113i;
+pattern.width = 0.01;
+pattern.height = 0.01;
+pattern.max_iter = 512;
+pattern.description = 'Delicate seahorse shapes in spiral valley';
+```
+
+**Exported images** (`FINAL_OUTPUT/*.png`, or custom paths):
+- HD: 1920×1080 pixels
+- 4K: 3840×2160 pixels
+- PNG format with full RGB color
+
+**Animation frames** (custom directory, e.g., `zoom_frames/frame_*.png`):
+- Sequential PNG files: frame_0001.png, frame_0002.png, ...
+- Ready for ffmpeg conversion to video
+
 ## Debugging and Troubleshooting
 
 ### Common Issues
@@ -321,10 +420,13 @@ plot_diagnostics()  % Shows innovation, Kalman gain, uncertainty evolution
 
 ## Project Status
 
-All three projects are feature-complete:
+All four projects are feature-complete:
 
-- **game-of-life**: ✅ All 6 phases complete
-- **heat-diffusion**: ✅ All 5 phases complete
-- **election-kalman-filter**: ✅ All 6 phases complete
+- **game-of-life**: ✅ All 6 phases complete (23 tests passing)
+- **heat-diffusion**: ✅ All 5 phases complete (30 tests passing)
+- **election-kalman-filter**: ✅ All 6 phases complete (comprehensive validation)
+- **mandelbrot**: ✅ All 6 phases complete (50 tests passing)
 
 Each project includes comprehensive tests, documentation, and example usage patterns. Refer to individual README.md files in each project directory for detailed usage instructions.
+
+**Mandelbrot Gallery**: 6 high-resolution fractal images exported to `mandelbrot/FINAL_OUTPUT/` showcasing all major fractal types and famous locations.
