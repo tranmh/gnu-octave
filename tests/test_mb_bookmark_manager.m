@@ -162,6 +162,38 @@ function test_unknown_action_raises
     assertExceptionThrown(@() bm('rename', 'x'));
 end
 
+function test_bookmark_names_cannot_leave_bookmark_dir
+    % A bookmark name must stay inside ./bookmarks: '..' is rejected
+    c = in_temp_dir();
+    up = ['..', filesep];
+    bookmark = struct('fractal_type', 'mandelbrot', 'description', 'outside', ...
+                      'timestamp', 'then');
+    save('outside.mat', 'bookmark');
+
+    ok = false;
+    try
+        ok = bm('save', mandelbrot_state(), [up, 'escape']);
+    catch
+    end
+    assertFalse(ok);
+    assertEqual(exist('escape.mat', 'file'), 0);
+
+    loaded = [];
+    try
+        loaded = bm('load', [up, 'outside']);
+    catch
+    end
+    assertTrue(isempty(loaded));
+
+    ok = false;
+    try
+        ok = bm('delete', [up, 'outside']);
+    catch
+    end
+    assertFalse(ok);
+    assertEqual(exist('outside.mat', 'file'), 2);
+end
+
 function test_action_is_case_insensitive
     c = in_temp_dir();
     assertTrue(bm('SAVE', mandelbrot_state(), 'upper'));
