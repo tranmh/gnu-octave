@@ -65,6 +65,8 @@ function success = save_bookmark(bookmark_dir, state, filename)
     filename = filename(1:end-4);
   end
 
+  check_bookmark_name(filename);
+
   % Full path
   filepath = fullfile(bookmark_dir, [filename, '.mat']);
 
@@ -121,6 +123,8 @@ function state = load_bookmark(bookmark_dir, filename)
   if endsWith(filename, '.mat')
     filename = filename(1:end-4);
   end
+
+  check_bookmark_name(filename);
 
   % Full path
   filepath = fullfile(bookmark_dir, [filename, '.mat']);
@@ -204,6 +208,15 @@ function bookmarks = list_bookmarks(bookmark_dir)
 end
 
 
+function check_bookmark_name(filename)
+  % Bookmark names are plain file names inside the bookmark directory
+  if ~ischar(filename) || any(filename == '/' | filename == '\' | filename == ':')
+    error('bookmark_manager:InvalidName', ...
+          'Bookmark name must not contain a path: %s', filename);
+  end
+end
+
+
 function success = delete_bookmark(bookmark_dir, filename)
   % Delete a bookmark file
 
@@ -215,6 +228,8 @@ function success = delete_bookmark(bookmark_dir, filename)
   if endsWith(filename, '.mat')
     filename = filename(1:end-4);
   end
+
+  check_bookmark_name(filename);
 
   % Full path
   filepath = fullfile(bookmark_dir, [filename, '.mat']);

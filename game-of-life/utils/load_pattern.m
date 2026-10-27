@@ -35,7 +35,13 @@ function [grid, success] = load_pattern(filename, target_rows, target_cols)
   if isempty(filename) || ~ischar(filename)
     error('load_pattern:InvalidFilename', 'Filename must be a non-empty string');
   endif
-  
+
+  % Filename must not contain a path (keeps the file inside saved_patterns)
+  if any(filename == '/' | filename == '\' | filename == ':')
+    warning('load_pattern:InvalidFilename', 'Filename must not contain a path: %s', filename);
+    return;
+  endif
+
   % Ensure filename has .txt extension
   if length(filename) < 4 || ~strcmp(filename(end-3:end), '.txt')
     filename = [filename, '.txt'];

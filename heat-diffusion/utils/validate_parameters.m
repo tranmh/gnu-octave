@@ -142,7 +142,7 @@ function [is_valid, warnings] = validate_1d_params(params, warnings)
         return;
     end
     
-    if params.nx > 500
+    if params.nx > 200
         warnings{end+1} = sprintf('Large grid (nx = %d). May be slow', params.nx);
     end
     

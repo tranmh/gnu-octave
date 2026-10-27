@@ -1,0 +1,50 @@
+# The safety net of gnu-octave, written by aqaa from what its QA run found:
+# unit tests with coverage and its floor, integration tests against the databases they need, end-to-end tests,
+# lint, SAST and dependency audits (report only until the findings are triaged; SARIF goes to code scanning).
+# Actions are pinned to commit SHAs (the comment names the release); jobs get read-only tokens.
+name: aqaa quality
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  unit-octave:
+    name: Unit tests (octave)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends octave
+      - name: Install dependencies
+        run: |-
+          export MOXUNIT_DIR="${MOXUNIT_DIR:-$HOME/moxunit}" MOCOV_DIR="${MOCOV_DIR:-$HOME/mocov}"
+          mkdir -p test-reports
+          if [ ! -d "$MOXUNIT_DIR/MOxUnit" ]; then git clone -q https://github.com/MOxUnit/MOxUnit "$MOXUNIT_DIR" && git -C "$MOXUNIT_DIR" checkout -q 51536d60d0b3aea7b8819650b101668e8fff9973 && git clone -q https://github.com/MOcov/MOcov "$MOCOV_DIR" && git -C "$MOCOV_DIR" checkout -q 6cb29e52660b95964ee9f955d1fe9ec5234fa40f; fi
+      - name: Unit tests
+        run: |-
+          export MOXUNIT_DIR="${MOXUNIT_DIR:-$HOME/moxunit}" MOCOV_DIR="${MOCOV_DIR:-$HOME/mocov}"
+          octave --no-gui --no-window-system --quiet --eval "addpath('ci/octave'); run_tests('test-reports/unit.xml', 'test-reports/coverage.xml')"
+      - name: Coverage floor (18%)
+        run: python3 "$GITHUB_WORKSPACE/ci/coverage_gate.py" cobertura 'test-reports/coverage.xml' 18
+      - if: always()
+        name: Upload test reports
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: unit-octave
+          path: test-reports
+          if-no-files-found: ignore
+          retention-days: 14
