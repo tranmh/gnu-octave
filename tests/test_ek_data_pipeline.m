@@ -70,17 +70,7 @@ function lines = raw_fixture()
 end
 
 function polls = run_parse()
-    try
-        [~, polls] = evalc('parse_polls()');
-    catch err
-        if ~isempty(strfind(err.message, 'cannot be indexed with .'))
-            moxunit_throw_test_skipped_exception( ...
-                ['aqaa: suspected bug: parse_polls calls struct2array, which Octave does not ' ...
-                 'provide; the try/catch skips every row and {poll_records.question_id} then ' ...
-                 'fails on the empty result, so valid fixture polls cannot be parsed']);
-        end
-        rethrow(err);
-    end
+    [~, polls] = evalc('parse_polls()');
 end
 
 function weekly = run_aggregate()
