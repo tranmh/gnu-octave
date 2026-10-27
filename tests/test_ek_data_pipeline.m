@@ -74,17 +74,10 @@ function polls = run_parse()
 end
 
 function weekly = run_aggregate()
-    try
-        [~, weekly] = evalc('aggregate_weekly()');
-    catch err
-        if ~isempty(strfind(err.message, 'field names mismatch'))
-            moxunit_throw_test_skipped_exception( ...
-                ['aqaa: suspected bug: aggregate_weekly preallocates weekly_data without the ' ...
-                 'week_start_str/week_end_str fields and then concatenates wk structs that ' ...
-                 'have them, so [weekly_data; wk] fails for any input']);
-        end
-        rethrow(err);
-    end
+    % aggregate_weekly preallocates weekly_data without the week_start_str/
+    % week_end_str fields that each wk struct carries, so [weekly_data; wk]
+    % fails with 'field names mismatch' for any input
+    [~, weekly] = evalc('aggregate_weekly()');
 end
 
 % ---- parse_polls (t2) ----
