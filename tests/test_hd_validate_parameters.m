@@ -138,12 +138,8 @@ function test_1d_large_grid_warns
     p.nx = 300;
     [ok, w] = run_validate(p, '1d');
     assertTrue(ok);
-    if isempty(w)
-        moxunit_throw_test_skipped_exception( ...
-            ['aqaa: suspected bug (hd-vp-4): validate_parameters(''1d'') only warns ' ...
-             'for nx > 500, documented threshold is nx > 200']);
-    end
     assertEqual(numel(w), 1);
+    assertFalse(isempty(strfind(w{1}, 'Large grid')));
 end
 
 function test_1d_fine_resolution_warns
