@@ -167,6 +167,23 @@ function delete_if_exists(p)
     end
 end
 
+function test_load_rejects_parent_directory_names
+    % The file name is "without path": '..' must not read outside saved_patterns
+    outside = fullfile(fileparts(patterns_dir()), 'aqaa_unit_outside.txt');
+    c = onCleanup(@() delete_if_exists(outside));
+    fid = fopen(outside, 'w');
+    fprintf(fid, '1 0\n0 1\n');
+    fclose(fid);
+    g = [];
+    ok = false;
+    try
+        [g, ok] = load_quiet(['..', filesep, 'aqaa_unit_outside']);
+    catch
+    end
+    assertFalse(ok);
+    assertTrue(isempty(g));
+end
+
 function test_load_argument_errors
     assertExceptionThrown(@() load_pattern(), 'load_pattern:NotEnoughArgs');
     assertExceptionThrown(@() load_pattern(''), 'load_pattern:InvalidFilename');
