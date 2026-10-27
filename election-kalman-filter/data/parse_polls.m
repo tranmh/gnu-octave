@@ -122,7 +122,7 @@ function [poll_data] = parse_polls()
         try
             parts = strsplit(data_lines{i}, ',');
             
-            if length(parts) < max(struct2array(col_idx))
+            if length(parts) < max(cell2mat(struct2cell(col_idx)))
                 skipped_count = skipped_count + 1;
                 continue;
             end
