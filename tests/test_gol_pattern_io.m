@@ -147,6 +147,26 @@ function test_save_argument_errors
     assertExceptionThrown(@() save_pattern([1 0], 42), 'save_pattern:InvalidFilename');
 end
 
+function test_save_rejects_parent_directory_names
+    % The file name is "without path": '..' must not write outside saved_patterns
+    outside = fullfile(fileparts(patterns_dir()), 'aqaa_unit_escape.txt');
+    c = onCleanup(@() delete_if_exists(outside));
+    delete_if_exists(outside);
+    ok = false;
+    try
+        ok = save_quiet(ones(3), ['..', filesep, 'aqaa_unit_escape']);
+    catch
+    end
+    assertFalse(ok);
+    assertFalse(exist(outside, 'file') == 2);
+end
+
+function delete_if_exists(p)
+    if exist(p, 'file')
+        delete(p);
+    end
+end
+
 function test_load_argument_errors
     assertExceptionThrown(@() load_pattern(), 'load_pattern:NotEnoughArgs');
     assertExceptionThrown(@() load_pattern(''), 'load_pattern:InvalidFilename');
