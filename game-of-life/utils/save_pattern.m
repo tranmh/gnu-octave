@@ -32,7 +32,12 @@ function success = save_pattern(grid, filename)
   if isempty(filename) || ~ischar(filename)
     error('save_pattern:InvalidFilename', 'Filename must be a non-empty string');
   endif
-  
+
+  % Filename must not contain a path (keeps the file inside saved_patterns)
+  if any(filename == '/' | filename == '\' | filename == ':')
+    error('save_pattern:InvalidFilename', 'Filename must not contain a path: %s', filename);
+  endif
+
   % Ensure filename has .txt extension
   if length(filename) < 4 || ~strcmp(filename(end-3:end), '.txt')
     filename = [filename, '.txt'];
